@@ -1,0 +1,234 @@
+SELECT * FROM item_do_pedido
+
+SELECT codigo_produto, quantidade FROM item_do_pedido
+
+SELECT DISTINCT codigo_cliente FROM item_do_pedido;
+
+SELECT codigo_produto AS "Codigo do Produto", descrição_produto AS "Descrição", val_unit AS "Valor Unitario" FROM produto
+
+SELECT nome_cliente AS "nome do Cliente", uf AS "Estado" FROM cliente;
+
+SELECT DISTINCT cidade FROM cliente;
+
+SELECT descricao_produto, val_unit * 1.3 FROM produto
+
+SELECT codigo_cliente, prazo_entrega + 3 FROM pedido
+
+SELECT nome_vendedor, faixa_comissao FROM vendedor WHERE salario_fixo > 4000
+
+SELECT * FROM produto WHERE unidade='Kg'
+
+SELECT nome_cliente, cidade from cliente WHERE uf='SP' or cidade='Londrina';
+
+SELECT num_pedido, prazo_entrega FROM pedido WHERE codigo_cliente = 720 AND codigo_vendedor = 101
+
+SELECT DISTINCT num_pedido FROM item_do_pedido WHERE quantidade >= 30
+
+SELECT * FROM vendedor WHERE faixa_comissao='C'
+
+SELECT * FROM vendedor WHERE faixa_comissao != 'C' --15
+
+-- --------------------------------------------------------------------------------------------------------------
+
+--SELECIONE TODOS OS VENDEDORES QUE COMEÇEM COM A LETRA J
+SELECT * FROM vendedor WHERE nome_vendedor LIKE'J%';
+
+--SELECIONE TODOS OS VENDEDORES QUE TENHAM IO NO NOME
+SELECT * FROM vendedor WHERE nome_vendedor LIKE '%io%';
+
+--LISTE AS DESCRIÇÕES DE TODOS OS PRODUTOS, EXCETO OS QUE POSSUEM A UNIDADE O PRODUTO IGUAL A 'm'
+SELECT descricao_produto FROM produto WHERE unidade !='M'
+
+--CRIE UMA CONSULTA QUE MOSTRE OS NOMES DOS VENDEDORES COM SALARIO ENTRE 1000 ATÉ 3000
+SELECT nome_vendedor FROM vendedor WHERE salario_fixo >= 1000 AND salario_fixo <= 3000; --OU DPS DO WHERE salario_fixo: BETWEEN 1000 AND 3000
+
+--SELECIONE OS CAMPOS NUM_PEDIDO E PRAZO_ENTREGA QUE O PRAZO ENTREGA ESTEJA ENTRE 15 E 25 DIAS 
+SELECT num_pedido, prazo_entrega FROM pedido WHERE prazo_entrega >= 15 AND prazo_entrega <= 25;
+
+-- LOCALIZE OS REGISTROS DE VENDEDORES QUE NÃO COMECEM COM A LETRA J
+SELECT * FROM vendedor WHERE nome_vendedor NOT LIKE 'J%'
+
+-- LOCALIZE OS REGISTROS DE VENDEDORES QUE CONTENHAM A LETRA IO
+SELECT * FROM cliente WHERE nome_cliente LIKE '%io%';
+SELECT * FROM vendedor
+SELECT * FROM vendedor WHERE nome_vendedor SIMILAR TO '[F-J]%'; -- mostra os vendedores que começam com a letra de F a J
+
+-- -----------------------------------------------------------------------------
+SELECT * FROM cliente WHERE nome_cliente SIMILAR TO '[A-F]%';
+
+SELECT * FROM cliente;
+SELECT descricao_produto FROM produto WHERE unidade != 'M' AND unidade != 'Kg';
+
+SELECT * FROM vendedor WHERE faixa_comissao IS NULL;
+
+SELECT * FROM cliente WHERE ie IS NOT NULL;
+
+SELECT * FROM cliente ORDER BY nome_cliente; -- ordena os nomes do menor pra maior
+
+SELECT nome_vendedor, salario_fixo FROM vendedor ORDER BY nome_vendedor;
+
+SELECT nome_cliente, endereco FROM cliente WHERE uf = 'SP' ORDER BY codigo_cliente;
+
+SELECT * FROM vendedor;
+
+SELECT num_pedido FROM pedido WHERE prazo_entrega = 20 ORDER BY num_pedido DESC; -- Desc deixa decresente
+
+SELECT faixa_comissao, nome_vendedor, codigo_vendedor FROM vendedor ORDER BY faixa_comissao, nome_vendedor;
+-- organiza primeiro a faixa de comissao e dps do que ja ta organizado organiza pelo nome
+
+SELECT uf, nome_cliente FROM cliente WHERE nome_cliente SIMILAR TO '[P-Z]%' ORDER BY uf, nome_cliente;
+
+SELECT SUM(salario_fixo) FROM vendedor --Soma todos os valores na coluna definida
+
+SELECT SUM(salario_fixo) FROM vendedor WHERE faixa_comissao = 'C';
+
+SELECT MAX (salario_fixo) FROM vendedor
+
+--selecione os clientes 
+
+SELECT * FROM cliente WHERE uf != 'SP' AND uf != 'RJ' AND uf != 'MG' AND uf != 'MS';
+
+-- ou assim:
+
+SELECT * FROM cliente WHERE uf NOT IN ('SP','RJ', 'MG', 'MS');
+-----------------------------------------------------------------------------------------------------------------
+
+SELECT * FROM vendedor WHERE salario_fixo >= 1000 AND salario_fixo <= 5000;
+
+--Selecione todos os produtos wue comecem com a letra C até P e deixa em ordem descresente
+
+SELECT * FROM produto WHERE descricao_produto SIMILAR TO '[C-P]%' ORDER BY val_unit DESC;
+
+
+SELECT nome_vendedor, salario_fixo, salario_fixo * 1.3 AS "salario aumentado" FROM vendedor
+
+SELECT SUM(salario_fixo) FROM vendedor;
+SELECT ROUND (AVG (salario_fixo),2) FROM vendedor -- AVG ve a média ( avg salario) e o round arredonda 
+
+SELECT MAX (salario_fixo) FROM vendedor 
+SELECT MIN (salario_fixo) FROM vendedor
+
+SELECT SUM (salario_fixo), AVG (salario_fixo), MAX (salario_fixo), MIN (salario_fixo), COUNT (*) FROM vendedor
+
+-- selecione a quantidade de clientes que possuem inscrição estadual (ie)
+
+SELECT COUNT (ie) FROM cliente
+--ou
+	
+
+-- selecione 
+
+SELECT * FROM vendedor
+SELECT * 
+SELECT faixa_comissao, SUM(salario_fixo) FROM vendedor GROUP BY faixa_comissao;
+--------------------------------------------------------------------------------
+
+-- Mostre o produto que possui o menor e o maior preço. --
+SELECT MAX (VAL_UNIT), MIN(VAL_UNIT) FROM PRODUTO
+
+-- Façam a média e a soma do salário fixo dos vendedores. --
+SELECT AVG(SALARIO_FIXO), SUM(SALARIO_FIXO) FROM vendedor
+
+-- Encontre a quantidade de clientes que não possuem a Inscrição Estadual nula. --
+SELECT COUNT (*) FROM CLIENTE WHERE IE IS NOT NULL
+
+-- Exiba o maior valor e a soma do salário fixo dos vendedores que possuem a faixa de comissão ‘A’. --
+SELECT MAX(SALARIO_FIXO), SUM(SALARIO_FIXO) FROM VENDEDOR WHERE FAIXA_COMISSAO = 'A'
+
+-- Mostre a quantidade total pedida, para o produto ‘papel’ de código ‘77’ na tabela item do pedido. --
+SELECT SUM(QUANTIDADE) FROM ITEM_DO_PEDIDO WHERE CODIGO_PRODUTO = 77
+
+-- Quantos produtos possuem um valor unitário menor do que R$ 2,00? --
+ SELECT COUNT(*) FROM PRODUTO  WHERE VAL_UNIT < 2.00
+
+ -- Qual o valor gasto com os vendedores em cada faixa de comissão --
+ SELECT FAIXA_COMISSAO, SUM(SALARIO_FIXO) FROM VENDEDOR GROUP BY FAIXA_COMISSAO ORDER BY FAIXA_COMISSAO
+
+ -- Quantos clientes tem em cada estado --
+ SELECT UF, COUNT(*) FROM CLIENTE GROUP BY UF HAVING COUNT(*) > 2
+
+ -- Faça uma consulta que mostre as faixas de comissão que possuem a soma maior do que 3.000. --
+ --Exclua os salários menores que R$ 1.000 --
+ SELECT FAIXA_COMISSAO, SUM(SALARIO_FIXO) FROM VENDEDOR WHERE SALARIO_FIXO >= 1000 
+ GROUP BY FAIXA_COMISSAO HAVING SUM(SALARIO_FIXO) > 3000
+
+/* 37 */
+SELECT UF, COUNT(*) FROM CLIENTE GROUP BY UF 
+
+/* 38 */
+SELECT FAIXA_COMISSAO, COUNT(*), SUM(SALARIO_FIXO) FROM VENDEDOR GROUP BY FAIXA_COMISSAO
+ 
+/* 39 */
+SELECT UNIDADE, SUM(VAL_UNIT) FROM PRODUTO GROUP BY UNIDADE ORDER BY UNIDADE
+ 
+/* 40 */ /* Liste a quantidade de pedidos que tem o prazo de entrega maior que 7, agrupados pelo código vendedor. */
+SELECT COUNT(*), CODIGO_VENDEDOR FROM PEDIDO WHERE PRAZO_ENTREGA > 7 GROUP BY CODIGO_VENDEDOR
+
+/* 41 */
+SELECT UF, COUNT (*) FROM CLIENTE WHERE UF != 'SP' GROUP BY UF
+
+/* 42 */
+SELECT NUM_PEDIDO, COUNT(*) FROM ITEM_DO_PEDIDO GROUP BY NUM_PEDIDO HAVING COUNT (*) > 3
+
+/* 43 */
+SELECT SUM(QUANTIDADE), CODIGO_PRODUTO FROM ITEM_DO_PEDIDO GROUP BY CODIGO_PRODUTO HAVING SUM(QUANTIDADE) > 50
+
+/* 44 */
+SELECT UNIDADE, ROUND(AVG(VAL_UNIT),2) FROM PRODUTO GROUP BY UNIDADE HAVING AVG(VAL_UNIT) < 1.50
+
+MISTURA AS TABELAS(MT BOSTA)
+SELECT * FROM CLIENTE CROSS JOIN PEDIDO
+
+--------------------------------------------------------------------------------
+
+INNER JOIN.
+SELECT CLIENTE.CODIGO_CLIENTE, CLIENTE.NOME_CLIENTE, PEDIDO.* FROM CLIENTE INNER JOIN PEDIDO ON CLIENTE.CODIGO_CLIENTE = PEDIDO.CODIGO_CLIENTE
+
+SELECIONE OS VENDEDORES  QUE FIZERAM OS PEDIDOS EM QUE O PRAZO DE ENTREGA SEJA > 15.
+SELECT VENDEDOR.*, PEDIDO.* FROM VENDEDOR 
+INNER JOIN PEDIDO ON VENDEDOR.CODIGO_VENDEDOR = PEDIDO.CODIGO_VENDEDOR WHERE PEDIDO.PRAZO_ENTREGA > 15
+
+--------------------------------------------------------------------------------
+
+/*45. Selecione o nome e a cidade dos clientes que possui o pedido com o prazo de entrega superiores a 25 dias.*/
+SELECT NOME_CLIENTE, CIDADE, PRAZO_ENTREGA FROM PEDIDO 
+INNER JOIN CLIENTE ON CLIENTE.CODIGO_CLIENTE = PEDIDO.CODIGO_CLIENTE WHERE PEDIDO.PRAZO_ENTREGA > 25
+
+/*46. Apresente a descrição, a unidade e a quantidade dos produtos pedidos que possuem a quantidade maior do que 40.*/
+SELECT P.DESCRICAO_PRODUTO, P.VAL_UNIT, I.QUANTIDADE FROM PRODUTO P
+INNER JOIN ITEM_DO_PEDIDO I ON PRODUTO.CODIGO_PRODUTO = ITEM_DO_PEDIDO.CODIGO_PRODUTO WHERE ITEM_DO_PEDIDO.QUANTIDADE > 40
+
+/*47. Encontre os nomes dos clientes atendidos pelo vendedor João que recebe R$ 2.650,00.*/
+SELECT DISTINCT C.NOME_CLIENTE FROM CLIENTE C
+INNER JOIN PEDIDO P ON C.CODIGO_CLIENTE = P.CODIGO_CLIENTE 
+INNER JOIN VENDEDOR V ON V.CODIGO_VENDEDOR = P.CODIGO_VENDEDOR 
+WHERE NOME_VENDEDOR LIKE '%João%' AND SALARIO_FIXO = 2650
+--------------------------------------------------------------------------------
+
+SELECT V.NOME_VENDEDOR FROM VENDEDOR V
+INNER JOIN PEDIDO P ON V.CODIGO_VENDEDOR = P.CODIGO_VENDEDOR 
+INNER JOIN CLIENTE C ON C.CODIGO_CLIENTE = P.CODIGO_CLIENTE
+WHERE NOME_CLIENTE LIKE '%Ana%';
+
+SELECT * FROM VENDEDOR V 
+INNER JOIN PEDIDO P ON V.CODIGO_VENDEDOR = P.CODIGO_VENDEDOR 
+WHERE P.PRAZO_ENTREGA > 15 AND V.SALARIO_FIXO >= 1000 
+ORDER BY NOME_VENDEDOR;
+
+SELECT C.NOME_CLIENTE, C.UF, P.PRAZO_ENTREGA FROM CLIENTE C 
+INNER JOIN PEDIDO P ON C.CODIGO_CLIENTE = P.CODIGO_CLIENTE
+WHERE UF='SP' AND P.PRAZO_ENTREGA > 15 OR P.PRAZO_ENTREGA > 15 AND UF='RJ';
+
+SELECT C.NOME_CLIENTE FROM CLIENTE C	
+INNER JOIN PEDIDO P ON C.CODIGO_CLIENTE = P.CODIGO_CLIENTE 
+INNER JOIN VENDEDOR V ON v.CODIGO_VENDEDOR = P.CODIGO_VENDEDOR
+WHERE NOME_VENDEDOR LIKE '%Antônio%';
+
+SELECT C.* FROM CLIENTE C 
+INNER JOIN PEDIDO P ON C.CODIGO_CLIENTE = P.CODIGO_CLIENTE 
+INNER JOIN ITEM_DO_PEDIDO I ON I.NUM_PEDIDO = P.NUM_PEDIDO
+INNER JOIN PRODUTO O ON O.CODIGO_PRODUTO = I.CODIGO_PRODUTO 
+WHERE P.PRAZO_ENTREGA > 15 AND O.DESCRICAO_PRODUTO = 'Queijo' AND C.UF='RJ'
+ORDER BY NOME_CLIENTE;
+
+SELECT * FROM PRODUTO
