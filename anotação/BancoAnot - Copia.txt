@@ -308,3 +308,107 @@ CREATE VIEW EX03 AS
 SELECT	NI.COD_NIVEL, SUM(F.SALARIO_BASE + F.BENEFICIOS +  F.VT + F.VR) AS SOMA
 FROM FUNCIONARIO F INNER JOIN CARGO CA ON F.COD_CARGO = CA.COD_CARGO
 INNER JOIN NIVEL NI ON CA.COD_NIVEL = NI.COD_NIVEL GROUP BY NI.COD_NIVEL;
+
+=====================================================================================================================================================================
+11-04-25
+-- como fazer função
+
+CREATE FUNCTION sp_ola()
+RETURNS TEXT
+LANGUAGE SQL
+AS $$
+	SELECT 'Olá Pessoal';
+$$;
+
+
+SELECT sp_ola(); -- USO
+
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Como fazer Procedimento
+
+CREATE PROCEDURE nome ()
+	LANGUAGE plpgsql
+	AS $$
+	BEGIN
+	raise notice 'Olá, Pessoal';
+END;
+$$;
+
+Call nome(); -- USO
+
+----------------------------------------------------------------------------------------------------------------------------------
+CREATE FUNCTION total_clientes()
+RETURNS BIGINT
+LANGUAGE SQL
+AS $$
+	SELECT COUNT (*)
+	FROM CLIENTE;
+$$;
+
+SELECT total_clientes(); --uSo
+
+----------------------------------------------------------------------------------------------------------------------------------
+-- exemplo 3: Listar todos os clientes
+
+CREATE FUNCTION listar_cliente()
+RETURNS TABLE(codigo INT, nome VARCHAR)
+LANGUAGE SQL
+AS $$
+	SELECT codigo_cliente, nome_cliente
+	FROM cliente
+$$;
+
+SELECT * FROM listar_cliente();
+
+----------------------------------------------------------------------------------------------------------------------------------
+-- Crie uma função que permita consultar todos os clientes,
+--filtrando os resultados pelo valor do campo estado. O valor do estado devera ser passado à função como parametro
+
+CREATE FUNCTION clientes_Estado(est Varchar)
+RETURNS TABLE(codigo INTEGER, nome VARCHAR, estado VARCHAR)
+LANGUAGE SQL
+AS $$
+	SELECT codigo_cliente, nome_cliente,uf
+	FROM cliente
+	WHERE uf=est;
+$$;
+
+SELECT * FROM clientes_Estado('RJ');
+
+------------------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION retornar_vendedores(ret VARCHAR)
+RETURNS TABLE(codigo INT, nome VARCHAR, salario INT, faixa VARCHAR)
+LANGUAGE SQL
+AS $$
+	SELECT *
+	FROM vendedor
+	WHERE faixa_comissao=ret;
+$$;
+
+SELECT * FROM retornar_vendedores('A');
+
+===============================================================================================================================
+
+25/04
+
+create function NumVendedoresCadastrados () --EX71
+returns int
+language SQL
+as $$
+select count(vendedor) from vendedor
+$$;
+
+select * from NumVendedoresCadastrados();
+
+create function EX72(nome varchar)
+returns int
+language sql
+as $$
+select count(*) FROM pedido P
+Inner join vendedor V
+	on P.codigo_vendedor = V.codigo_vendedor
+where v.nome_vendedor = nome;
+$$;
+
+select * from EX72('José');

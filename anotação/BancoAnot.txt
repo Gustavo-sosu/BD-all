@@ -232,3 +232,79 @@ WHERE P.PRAZO_ENTREGA > 15 AND O.DESCRICAO_PRODUTO = 'Queijo' AND C.UF='RJ'
 ORDER BY NOME_CLIENTE;
 
 SELECT * FROM PRODUTO
+
+
+===================----------------------------------==================================
+14-03
+
+Create View exercicio65
+    (Num_pedido, Codigo, Descricao, quantidade, Val_Unit, Total)as 
+         Select i.num_pedido, p.codigo_produto, p.descricao_produto, i.quantidade, p.val_unit, i.quantidade * p.val_unit
+     From Item_do_pedido i inner join Produto p 
+     On i.codigo_produto=p.codigo_produto
+
+CREATE VIEW EX66
+  (NUM_PEDIDO, TOTAL) AS
+     Select num_pedido, sum(total)
+     From exercicio65
+     Group by num_pedido
+	
+CREATE VIEW EX67 AS
+SELECT  P.NUM_PEDIDO, V.CODIGO_VENDEDOR, V.SALARIO_FIXO, B.TOTAL FROM VENDEDOR V INNER JOIN PEDIDO P ON V.CODIGO_VENDEDOR = P.CODIGO_VENDEDOR
+INNER JOIN EX66 B ON B.NUM_PEDIDO = P.NUM_PEDIDO
+
+--Com base na visualização anterior, crie uma outra view que exiba o total vendido  por cada "codigo de vendedor" e "nome do vendedor".
+
+CREATE VIEW EX68 AS
+SELECT SUM(TOTAL) AS TOTAL_VENDIDO, V.CODIGO_VENDEDOR, V.NOME_VENDEDOR FROM VENDEDOR V
+INNER JOIN EX67 E ON V.CODIGO_VENDEDOR = E.CODIGO_VENDEDOR 
+GROUP BY V.CODIGO_VENDEDOR, NOME_VENDEDOR
+
+-- SELECT * FROM EX68
+-- DROP VIEW EX68
+
+	--A PARTIR DA VIEW ANTERIOR, ELABORE UMA CONSULTA QUE RETORNE O "CODIGO DO VENDEDOR", "NOME DO VENDEDOR",
+	--SEU "SALARIO FIXO" E O "SALARIO TOTAL", CALCULADO COMO 
+	--"SALARIO TOTAL" = "SALARIO FIXO"+(5%x"TOTAL DE VENDAS"")
+	
+CREATE VIEW EX69 AS
+SELECT DISTINCT V.CODIGO_VENDEDOR, V.NOME_VENDEDOR, V.SALARIO_FIXO, SALARIO_FIXO + (5*(E.TOTAL_VENDIDO/100)) AS SALARIO_TOTAL
+FROM VENDEDOR V
+INNER JOIN EX68 E ON V.CODIGO_VENDEDOR = E.CODIGO_VENDEDOR;
+
+-- SELECT * FROM EX69
+-- DROP VIEW EX69
+
+--70. Crie uma View que exiba os cinco produtos mais vendidos, considerando a soma da "quantidade" vendida,
+--ordenados do maior para o menor.
+
+CREATE VIEW EX70 AS
+SELECT DISTINCT P.CODIGO_PRODUTO, P.DESCRICAO_PRODUTO, SUM(QUANTIDADE) AS QUANTIDADE_TOTAL
+FROM PRODUTO P INNER JOIN ITEM_DO_PEDIDO I
+	ON P.CODIGO_PRODUTO=I.CODIGO_PRODUTO
+GROUP BY P.CODIGO_PRODUTO, P.DESCRICAO_PRODUTO
+ORDER BY 3 DESC
+LIMIT 5
+
+------------------------------------------------------------------------------------
+
+					21/03/2025
+
+/1.  Crie uma view para selecionar todos os dados do Nível, Cargo, Cliente e Região./
+CREATE VIEW EX01 AS
+SELECT N., C.AREA,C.COD_AREA, C.QUADRO, C.BONUS, C.CONTRATACAO, CL., CE.ESTADO, CE.REGIAO
+FROM NIVEL N INNER JOIN CARGO C ON N.COD_NIVEL = C.COD_NIVEL
+INNER JOIN CLIENTE CL ON C.COD_CARGO = CL.COD_CARGO_RESPONSAVEL
+INNER JOIN CEP CE ON CL.CEP = CE.CEP;
+
+/2. Elabora uma view que mostre a quantidade de clientes em cada Região/
+CREATE VIEW ex02 AS
+SELECT ce.regiao, COUNT(cl.cod_cliente) AS quantidade_clientes FROM cliente cl
+INNER JOIN cep ce ON cl.cep = ce.cep
+GROUP BY ce.regiao;
+
+/3. Elabora uma view que mostre a soma do salário base, benefícios, vt, vr e de impostos por nível./
+CREATE VIEW EX03 AS
+SELECT	NI.COD_NIVEL, SUM(F.SALARIO_BASE + F.BENEFICIOS +  F.VT + F.VR) AS SOMA
+FROM FUNCIONARIO F INNER JOIN CARGO CA ON F.COD_CARGO = CA.COD_CARGO
+INNER JOIN NIVEL NI ON CA.COD_NIVEL = NI.COD_NIVEL GROUP BY NI.COD_NIVEL;
