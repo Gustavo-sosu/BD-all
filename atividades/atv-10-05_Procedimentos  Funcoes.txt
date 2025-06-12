@@ -1,0 +1,89 @@
+/*74.  Crie uma função que retorne os códigos, descrição e unidades 
+de todos os produtos cadastrados. Ao selecionar a função ordene pela
+descrição do produto. */
+
+create function EX74 ()
+RETURNS TABLE (codigo int, descri varchar, unid varchar)
+LANGUAGE SQL
+AS $$
+		SELECT codigo_produto, descricao_produto, unidade
+		FROM produto
+		ORDER BY descricao_produto;
+$$;
+
+SELECT * FROM EX74();
+
+/*75.   Desenvolva uma função que apresente o maior, o menor e
+a média dos salários dos vendedores que atenderam um cliente
+específico, utilizando como parâmetros o nome do cliente e uma
+faixa de comissão. Como exemplo de parâmetro pode ser 
+usado Susana, C. */
+
+CREATE FUNCTION EX75(nome varchar, comi varchar)
+RETURNS TABLE (maximo int, media int, minimo int)
+LANGUAGE SQL
+AS $$
+		SELECT MAX(salario_fixo), AVG(salario_fixo), MIN(salario_fixo)
+		FROM vendedor V
+		INNER JOIN pedido P
+		ON V.codigo_vendedor = P.codigo_vendedor
+		INNER JOIN cliente C
+		ON P.codigo_cliente = C.codigo_cliente
+		WHERE nome = C.nome_cliente AND comi = faixa_comissao;
+$$;
+
+SELECT * FROM EX75('Susana', 'C')
+
+/*76.   Desenvolva uma função que mostre código e descrição do produto, a quantidade de produtos vendidos,
+o Preço Unitário e o subtotal (quantidade*Preço Unitário) de um determinado Pedido.*/
+CREATE FUNCTION EX76(IDPEDIDO INT)
+RETURNS TABLE(CODP INT, DESCP VARCHAR, QUANTIDADE_DE_VENDIDOS INT, PRECO NUMERIC, SUBTOTAL NUMERIC)
+LANGUAGE SQL
+AS $$
+	SELECT PR.CODIGO_PRODUTO, PR.DESCRICAO_PRODUTO, I.QUANTIDADE, PR.VAL_UNIT, (I.QUANTIDADE * PR.VAL_UNIT)
+	FROM PRODUTO PR INNER JOIN ITEM_DO_PEDIDO I ON PR.CODIGO_PRODUTO = I.CODIGO_PRODUTO INNER JOIN PEDIDO P
+	ON P.NUM_PEDIDO = I.NUM_PEDIDO WHERE P.NUM_PEDIDO = IDPEDIDO
+$$
+
+SELECT * FROM EX76(121)
+DROP FUNCTION EX76
+
+/* 77.   Desenvolva um procedimento que retorne a soma de uma venda de um determinado pedido.*/
+CREATE FUNCTION EX77(IDPEDIDO INT)
+RETURNS NUMERIC
+LANGUAGE SQL
+AS $$
+	SELECT SUM(I.QUANTIDADE * P.VAL_UNIT) FROM PRODUTO P INNER JOIN
+	ITEM_DO_PEDIDO I ON I.CODIGO_PRODUTO = P.CODIGO_PRODUTO WHERE I.NUM_PEDIDO = IDPEDIDO
+$$
+SELECT EX77(121)
+DROP FUNCTION EX77
+
+/* 78.   Elabore uma função que informe, para cada vendedor, a quantidade de pedidos em que ele participou.*/
+CREATE FUNCTION EX78(NOMEVENDEDOR VARCHAR)
+RETURNS BIGINT
+LANGUAGE SQL
+AS $$
+	SELECT COUNT(P.NUM_PEDIDO) FROM VENDEDOR V INNER JOIN PEDIDO P ON V.CODIGO_VENDEDOR = P.CODIGO_VENDEDOR
+	WHERE V.NOME_VENDEDOR = NOMEVENDEDOR
+$$
+
+SELECT EX78('José')
+DROP FUNCTION EX78
+
+/*79.   Crie uma função que retorne o código e o nome dos clientes, filtrando os resultados com base no código do vendedor,
+no estado de residência do cliente e no prazo de entrega do pedido.
+Utilize como exemplo os seguintes parâmetros: 101 (código do vendedor), 'RJ' (estado) e 20 (prazo de entrega).*/
+CREATE FUNCTION EX79(CODVENDEDOR INT, ESTADOCLIENTE VARCHAR, PRAZOENTREGA INT)
+RETURNS TABLE(CODIGOCLIENTE INT, NOMECLIENTE VARCHAR)
+LANGUAGE SQL
+AS $$
+	SELECT C.CODIGO_CLIENTE, C.NOME_CLIENTE FROM CLIENTE C INNER JOIN PEDIDO P
+	ON C.CODIGO_CLIENTE = P.CODIGO_CLIENTE INNER JOIN VENDEDOR V 
+	ON P.CODIGO_VENDEDOR = V.CODIGO_VENDEDOR WHERE V.CODIGO_VENDEDOR = CODVENDEDOR AND
+	C.UF = ESTADOCLIENTE AND
+	P.PRAZO_ENTREGA = PRAZOENTREGA
+	
+$$
+SELECT EX79(101, 'RJ', 20)
+DROP FUNCTION EX79
