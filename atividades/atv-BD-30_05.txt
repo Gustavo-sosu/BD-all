@@ -1,0 +1,52 @@
+--1
+create user vendedor with encrypted password '123';
+
+--2
+alter role vendedor with superuser login;
+
+--3
+alter role vendedor nosuperuser noinherit;
+
+--4
+drop role vendedor;
+
+--5
+create user limitado with encrypted password '123' nosuperuser nocreatedb nocreaterole noinherit login connection limit 4 valid until;
+
+-- 6
+create user vendedor with encrypted password '123' noinherit login; create user secretaria with encrypted password '123' noinherit login; create user atendente with encrypted password '123' noinherit login;
+
+--7
+select * from pg_user;
+
+--8
+create role funcionário;
+
+--9
+grant funcionario to vendedor; grant funcionario to secretaria; grant funcionario to atendente; grant funcionario to limitado;
+
+--10
+revoke funcionario from limitado;
+
+--11
+select * from pg_user;
+
+--12
+revoke all on cliente, pedido, vendedor, item_do_pedido, produto from public;
+
+--13
+grant select, insert, update on cliente, vendedor to secretaria;
+
+--14
+select * from cliente; /* Permissão Concedida */
+select * from vendedor; /* Permissão Concedida */
+select * from produto; /* Permissão Negada */
+insert into cliente (codigo_cliente, nome_cliente) values (900, 'Jorge Daora'); /* Permissão Concedida */
+delete from cliente where codigo_cliente = 900; /* Permissão Negada */
+
+--15
+revoke select, insert, update on vendedor from secretaria;
+
+--16
+select * from cliente; /* Permissão Concedida */
+select * from vendedor; /* Permissão Negada */

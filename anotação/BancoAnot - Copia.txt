@@ -412,3 +412,93 @@ where v.nome_vendedor = nome;
 $$;
 
 select * from EX72('José');
+
+
+==============================================================
+create function EX73 (nome varchar)
+returns table (codigo int, nomeVend varchar, salario int)
+language sql
+as $$
+	SELECT V.codigo_vendedor, nome_vendedor, salario_fixo
+	FROM vendedor V
+	INNER JOIN pedido P
+	ON V.codigo_vendedor = P.codigo_vendedor
+	WHERE nome = (SELECT nome_cliente FROM cliente)
+	$$;
+
+	select * from EX73('Ana');
+	drop function EX73;
+
+codigo acima errado!!!!!!!!!!!!!!
+
+74.  Crie uma função que retorne os códigos, descrição e unidades de todos os produtos cadastrados. Ao selecionar a função ordene pela descrição do produto.
+
+--74.  Crie uma função que retorne os códigos, descrição e unidades 
+--de todos os produtos cadastrados. Ao selecionar a função ordene pela
+--descrição do produto.
+
+create function EX74 ()
+RETURNS TABLE (codigo int, descri varchar, unid varchar)
+LANGUAGE SQL
+AS $$
+		SELECT codigo_produto, descricao_produto, unidade
+		FROM produto
+		ORDER BY descricao_produto;
+$$;
+
+SELECT * FROM EX74();
+
+--75.   Desenvolva uma função que apresente o maior, o menor e
+--a média dos salários dos vendedores que atenderam um cliente
+--específico, utilizando como parâmetros o nome do cliente e uma
+--faixa de comissão. Como exemplo de parâmetro pode ser 
+--usado Susana, C.
+
+CREATE FUNCTION EX75(nome varchar, comi varchar)
+RETURNS TABLE (maximo int, media int, minimo int)
+LANGUAGE SQL
+AS $$
+		SELECT MAX(salario_fixo), AVG(salario_fixo), MIN(salario_fixo)
+		FROM vendedor V
+		INNER JOIN pedido P
+		ON V.codigo_vendedor = P.codigo_vendedor
+		INNER JOIN cliente C
+		ON P.codigo_cliente = C.codigo_cliente
+		WHERE nome = C.nome_cliente AND comi = faixa_comissao;
+$$;
+
+SELECT * FROM EX75('Susana', 'C')
+
+--76.   Desenvolva uma função que mostre código e descrição do produto
+--, a quantidade de produtos vendidos, o Preço Unitário e o subtotal
+-- (quantidade*Preço Unitário) de um determinado Pedido.
+
+CREATE FUNCTION EX76(ped int)
+RETURNS TABLE (codigo int, descProd varchar, quantProd int, preco int, subtotal int)
+LANGUAGE SQL
+AS $$
+		SELECT I.codigo_produto, P.descricao_produto, I.quantidade, P.val_unit, (P.val_unit*I.quantidade)
+		FROM Produto P
+		INNER JOIN pedido E
+		ON P.codigo_produto = E.codigo_produto
+		INNER JOIN item_do_pedido I
+		ON E.num_pedido = I.num_pedido
+		WHERE ped = E.num_pedido
+$$; --vc ligou produto com pedido, mas em pedido não tem ligação, apenas item_do_pedido
+
+
+==================================================================================================================================================================================
+
+--desenvolva uma function que retorne o nome e o código do cliente em que é passado por parâmetro o nome do produto 
+--comprado e o estado que  reside o cliente
+
+create function EXREV(descricao varchar, estado varchar)
+	returns table (codigo varchar, nome int)
+	language SQL
+	AS$$
+		SELECT nome_cliente, codigo_cliente FROM cliente c
+		INNER JOIN pedido p ON c.codigo_cliente = p.codigo_cliente
+		INNER JOIN item_do_pedido i ON p.num_pedido = i.num_pedido
+		INNER JOIN produto pr ON i.codigo_produto = p.codigo_produto
+		WHERE UPPER (pr.descricao_produto) = UPPER (descricao) AND UPPER (c.uf) = upper (estado)
+$$;

@@ -308,3 +308,52 @@ CREATE VIEW EX03 AS
 SELECT	NI.COD_NIVEL, SUM(F.SALARIO_BASE + F.BENEFICIOS +  F.VT + F.VR) AS SOMA
 FROM FUNCIONARIO F INNER JOIN CARGO CA ON F.COD_CARGO = CA.COD_CARGO
 INNER JOIN NIVEL NI ON CA.COD_NIVEL = NI.COD_NIVEL GROUP BY NI.COD_NIVEL;
+
+=======================================================================================
+
+CREATE ROLE ADM;
+
+SELECT * FROM PG_USER;
+
+
+alter role adm LOGIN;
+
+alter role adm With encrypted password '123' superuser createDB inherit valid until '2025-05-30' limit connection limit 3 createrole;
+
+create role user1 with encrypted password '123' LOGIN;
+create role user2 with encrypted password '123' LOGIN;
+create role user3 with encrypted password '123' LOGIN;
+
+drop role user3;
+
+select * from PG_USER
+
+	
+create role Funcionario
+grant funcionario to user1, user2, user3;
+
+drop role funcionario;
+revoke role funcionario FROM user3
+-- grant define previlegio
+--revoke: revoga
+
+============================================================================================
+					30/05
+
+Create role lucas with encrypted password '123' login;
+
+Create role bruno with encrypted password '123' login;
+
+Create role helena with encrypted password '123' login;
+
+select * from pg_user;
+
+alter role bruno createdb superuser;
+
+alter role bruno nosuperuser;
+
+revoke all on cliente, pedido, item_do_pedido, produto, vendedor from public;
+
+grant select, insert on cliente to bruno;
+
+revoke insert on cliente from bruno --tira a permissao do insert
